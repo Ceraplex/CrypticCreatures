@@ -1,6 +1,4 @@
-package CrypticCreatures.models;
-
-import CrypticCreatures.models.card.Card;
+package CrypticCreatures.models.cards;
 
 import java.util.List;
 

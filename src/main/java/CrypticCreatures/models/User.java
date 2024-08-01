@@ -1,6 +1,6 @@
 package CrypticCreatures.models;
 
-import CrypticCreatures.models.Stack;
+import CrypticCreatures.models.cards.Stack;
 
 public class User {
 
@@ -16,4 +16,5 @@ public class User {
 
     private Stack stack;
     private Stack deck;
+    private int elo = 100;
 }
