@@ -1,0 +1,116 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package CrypticCreatures.models{
+    package cards{
+
+        CardCollection <|-- Deck
+        CardCollection <|-- Stack
+        CardCollection <|-- Package
+
+        Deck -- Card
+        Stack -- Card
+        Package -- Card
+
+        Card <|-- SpellCard
+
+        SpellCard - ElementType
+        SpellCard -- Quality
+
+
+
+
+        abstract class CardCollection{
+            -private List<Card>cards
+            +public void addCards(List<Card>newCards)
+        }
+        class Deck{
+            +public Card getRandomCard()
+            +public void editDeck()
+        }
+        class Stack{
+            +public void addCards
+        }
+        class Package
+
+
+        abstract class Card{
+            -protected String name
+            -protected int dmg
+            -protected int elementType
+            +public void printCard()
+        }
+
+        class SpellCard{
+            +public void printCard()
+        }
+
+        package monster{
+            Card <|-- MonsterCard
+
+            MonsterCard - CreatureType
+            ElementType - MonsterCard
+
+            MonsterCard -- Quality
+
+            class MonsterCard{
+                -CreatureType creatureType;
+                +public void printCard()
+            }
+            enum CreatureType {
+                        GOBLIN (0.5),
+                        DRAGON (4.0),
+                        ELF (3.0),
+                        WIZARD (3.5),
+                        ORK (1.2),
+                        KRAKEN (5.0),
+                        KNIGHTS (2.5)
+
+                        -private double dmgMultiplier
+                        +CreatureType(double dmgMultiplier)
+            }
+        }
+
+        enum Quality {
+            COMMON,
+            RARE,
+            EPIC,
+            LEGENDARY
+        }
+        enum ElementType {
+            FIRE,
+            WATER,
+            ENERGY,
+            EARTH,
+            AIR
+        }
+
+
+    }
+
+    package service{
+        class Battle{
+            +public static void fight(User player1, User player2)
+            +private static void round(Card card1, Card card2)
+            +private static void battleLog()
+        }
+        class Shop{
+            public static Package generatePasckage()
+        }
+    }
+    class User{
+        -private Stack userStack
+        -private Stack userDeck
+        -private int elo = 100
+        +public static Stack getStack()
+        +public static Stack getDeck()
+        +public static void setStack(Stack stack)
+    }
+
+    package utils{
+        class Database
+    }
+
+
+}
+@enduml

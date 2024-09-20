@@ -1,6 +1,7 @@
-package CrypticCreatures.models.cards;
+package CrypticCreatures.models.cards.collections;
 
-import java.util.List;
+import CrypticCreatures.models.cards.Card;
+import CrypticCreatures.models.cards.Stack;
 
 public class Deck {
 

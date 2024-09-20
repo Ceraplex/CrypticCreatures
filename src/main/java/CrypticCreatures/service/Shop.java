@@ -1,10 +1,10 @@
 package CrypticCreatures.service;
 
-import CrypticCreatures.models.cards.Stack;
+import CrypticCreatures.models.cards.Package;
 //buy Packages, sell Cards, trade Cards
 public class Shop {
-    public static Stack generatePackage () {
+    public static Package generatePackage () {
 
-        return new Stack();
+        return new Package();
     }
 }
