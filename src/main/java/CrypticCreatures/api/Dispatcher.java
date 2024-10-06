@@ -65,13 +65,24 @@ public class Dispatcher implements Runnable {
                 String method = requestParts[0];
                 String path = requestParts[1];
 
-                if(path.equals("/users") || path.equals("/sessions")){
+                if(path.startsWith("/users") || path.startsWith("/sessions")){
                     UserController.handleRequest(method, path, body, out, database);
                 }
-                if(path.equals("/packages")){
+                if(path.startsWith("/packages")){
                     PackageController.handleRequest(method, path, body, out,  database);
                 }
-                //TODO: Route to other controllers
+                if(path.startsWith("/cards")){
+                    CardController.handleRequest(method, path, body, out, database);
+                }
+                if(path.startsWith("/deck")){
+                    DeckController.handleRequest(method, path, body, out, database);
+                }
+                if(path.startsWith("/tradings")){
+                    TradingController.handleRequest(method, path, body, out, database);
+                }
+                if(path.startsWith("/scoreboard") || path.startsWith("/stats")){
+                    StatsController.handleRequest(method, path, body, out, database);
+                }
             }
 
 

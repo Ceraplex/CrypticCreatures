@@ -3,36 +3,18 @@
 
 package CrypticCreatures.models{
     package cards{
-
-        CardCollection <|-- Deck
-        CardCollection <|-- Stack
-        CardCollection <|-- Package
-
-        Deck -- Card
         Stack -- Card
-        Package -- Card
 
         Card <|-- SpellCard
 
         SpellCard - ElementType
         SpellCard -- Quality
 
-
-
-
-        abstract class CardCollection{
-            -private List<Card>cards
-            +public void addCards(List<Card>newCards)
-        }
-        class Deck{
-            +public Card getRandomCard()
-            +public void editDeck()
-        }
         class Stack{
-            +public void addCards
+            -private List<Card> cards
+            +public void addCards(Stack stack)
+            +public void addCard(Card card)
         }
-        class Package
-
 
         abstract class Card{
             -protected String name
@@ -110,7 +92,6 @@ package CrypticCreatures.models{
     package utils{
         class Database
     }
-
 
 }
 @enduml
