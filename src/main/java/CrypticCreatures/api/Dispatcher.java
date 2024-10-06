@@ -68,6 +68,9 @@ public class Dispatcher implements Runnable {
                 if(path.equals("/users") || path.equals("/sessions")){
                     UserController.handleRequest(method, path, body, out, database);
                 }
+                if(path.equals("/packages")){
+                    PackageController.handleRequest(method, path, body, out,  database);
+                }
                 //TODO: Route to other controllers
             }
 

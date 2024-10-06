@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 public class User {
 
     public User(String Username, String Password) {
-        this.Username = Username;
-        this.Password = Password;
+        this.username = Username;
+        this.password = Password;
+        this.token = Username + "-mtcgToken";
     }
 
     public static void setStack(Stack stack) {
@@ -37,10 +38,11 @@ public class User {
     }
 
     @JsonProperty("Username")
-    private String Username;
+    private String username;
     @JsonProperty("Password")
-    private String Password;
+    private String password;
 
+    private String token;
     private final Stack stack = new Stack();
     private final Stack deck = new Stack();
     private int elo = 100;

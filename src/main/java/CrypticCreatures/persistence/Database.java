@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
-    List<User> users;
+    private List<User> users;
 
     public Database(){
         users = new ArrayList<User>();
@@ -20,4 +20,11 @@ public class Database {
         return true;
     }
 
+    public Boolean findUser(User user){
+        if(users.contains(user)){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

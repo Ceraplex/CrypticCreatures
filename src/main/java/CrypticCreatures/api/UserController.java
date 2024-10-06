@@ -36,6 +36,7 @@ public class UserController {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(body, User.class);
         if(database.addUser(user)){
+            //Success:
             out.write("HTTP/1.1 201 Created\r\n");
             out.write("\r\n");
             out.flush();
@@ -45,20 +46,29 @@ public class UserController {
             System.out.println(user.toString());
 
         }else{
+            //Error:
             out.write("HTTP/1.1 409 Conflict\r\n");
             out.write("Content-Type: text/plain\r\n");
             out.write("\r\n");
             out.write("409 - Conflict: Username already exists\r\n");
+            out.flush();
 
+            //TODO: remove debug info
             System.out.println("user already exists");
             System.out.println(user.toString());
-            out.flush();
         }
     }
 
     private static void loginUser(String body, BufferedWriter out, Database database) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.readValue(body, User.class);
+        User user = mapper.readValue(body, User.class);
+        if(database.findUser(user)){
+            out.write("HTTP/1.1 200 Success\r\n");
+            out.write("Content-Type: text/plain\r\n");
+            out.write("\r\n");
+            out.write(user.getToken());
+            out.flush();
+        }
     }
 
 
