@@ -1,6 +1,7 @@
 package CrypticCreatures.httpServer;
 
 import CrypticCreatures.api.Dispatcher;
+import CrypticCreatures.persistence.Database;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,13 +10,14 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
+    private Database database = new Database();
     private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
     public void start(int port) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                threadPool.submit(new Dispatcher(clientSocket));
+                threadPool.submit(new Dispatcher(clientSocket, database));
             }
         } catch (Exception e) {
             e.printStackTrace();

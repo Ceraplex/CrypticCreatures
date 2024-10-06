@@ -1,6 +1,6 @@
 package CrypticCreatures.api;
 
-import CrypticCreatures.api.UserController;
+import CrypticCreatures.persistence.Database;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,12 +11,14 @@ import java.net.Socket;
 
 public class Dispatcher implements Runnable {
 
+    private Database database;
     private final Socket clientSocket;
     private BufferedReader in;
     private BufferedWriter out;
 
-    public Dispatcher(Socket clientSocket) {
+    public Dispatcher(Socket clientSocket, Database database) {
         this.clientSocket = clientSocket;
+        this.database = database;
     }
 
     @Override
@@ -25,22 +27,37 @@ public class Dispatcher implements Runnable {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 
             StringBuilder headerBuilder = new StringBuilder();
-            StringBuilder bodyBuilder = new StringBuilder();
-
-            //Read HTTP request header
             String inputLine;
-            while ((inputLine = in.readLine()) != null && !inputLine.isEmpty()){
-                headerBuilder.append(inputLine).append(System.lineSeparator());
+            int contentLength = 0;
+
+            // Read the request line
+            inputLine = in.readLine();
+            while (inputLine != null && inputLine.isEmpty()) {
+                inputLine = in.readLine();
             }
 
-            //Read HTTP request body
-            while ((inputLine = in.readLine()) != null && !inputLine.isEmpty()){
-                bodyBuilder.append(inputLine).append(System.lineSeparator());
+            String requestLine = inputLine;
+
+            // Read HTTP request headers
+            while ((inputLine = in.readLine()) != null && !inputLine.isEmpty()) {
+                headerBuilder.append(inputLine).append("\r\n");
+                // Get Content-Length to read the body later
+                if (inputLine.toLowerCase().startsWith("content-length:")) {
+                    String[] parts = inputLine.split(":", 2);
+                    if (parts.length == 2) {
+                        contentLength = Integer.parseInt(parts[1].trim());
+                    }
+                }
             }
-            String body = bodyBuilder.toString();
+
+            String body = "";
+            if (contentLength > 0) {
+                char[] bodyChars = new char[contentLength];
+                int charsRead = in.read(bodyChars, 0, contentLength);
+                body = new String(bodyChars, 0, charsRead);
+            }
 
 
-            String requestLine = headerBuilder.toString().split(System.lineSeparator())[0];
             if(requestLine != null && !requestLine.isEmpty()){
 
                 //Parse method and path
@@ -48,14 +65,15 @@ public class Dispatcher implements Runnable {
                 String method = requestParts[0];
                 String path = requestParts[1];
 
-                if(path.equals("/users")){
-                    UserController.handleRequest(method, path, body, out);
+                if(path.equals("/users") || path.equals("/sessions")){
+                    UserController.handleRequest(method, path, body, out, database);
                 }
                 //TODO: Route to other controllers
             }
 
 
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
