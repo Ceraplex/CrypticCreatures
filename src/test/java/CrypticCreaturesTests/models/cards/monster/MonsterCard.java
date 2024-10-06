@@ -1,7 +1,7 @@
 package CrypticCreaturesTests.models.cards.monster;
 
-import CrypticCreatures.models.cards.*;
-import CrypticCreatures.models.cards.monster.CreatureType;
+import CrypticCreatures.core.models.cards.Card;
+import CrypticCreatures.core.models.cards.monster.CreatureType;
 
 public class MonsterCard extends Card {
 

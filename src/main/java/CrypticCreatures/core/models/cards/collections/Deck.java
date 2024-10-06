@@ -1,7 +1,7 @@
-package CrypticCreatures.models.cards.collections;
+package CrypticCreatures.core.models.cards.collections;
 
-import CrypticCreatures.models.cards.Card;
-import CrypticCreatures.models.cards.Stack;
+import CrypticCreatures.core.models.cards.Card;
+import CrypticCreatures.core.models.cards.Stack;
 
 public class Deck {
 

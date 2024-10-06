@@ -1,6 +1,6 @@
 package CrypticCreaturesTests.models;
 
-import CrypticCreatures.models.cards.Stack;
+import CrypticCreatures.core.models.cards.Stack;
 
 public class User {
 

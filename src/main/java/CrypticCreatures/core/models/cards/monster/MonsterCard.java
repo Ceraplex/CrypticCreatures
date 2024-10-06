@@ -1,6 +1,7 @@
-package CrypticCreatures.models.cards.monster;
+package CrypticCreatures.core.models.cards.monster;
 
-import CrypticCreatures.models.cards.*;
+import CrypticCreatures.core.models.cards.Card;
+import CrypticCreatures.core.models.cards.*;
 
 public class MonsterCard extends Card {
 

@@ -1,8 +1,8 @@
 package CrypticCreaturesTests.models.cards;
 
 import java.util.List;
-import CrypticCreatures.models.cards.*;
-import CrypticCreatures.models.cards.Card;
+
+import CrypticCreatures.core.models.cards.Card;
 
 //Packages can be bought with coins
 public class Package {

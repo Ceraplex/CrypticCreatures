@@ -1,4 +1,4 @@
-package CrypticCreatures.models.cards;
+package CrypticCreatures.core.models.cards;
 
 public abstract class Card {
     protected String name;

@@ -1,4 +1,4 @@
-package CrypticCreatures.models.cards.monster;
+package CrypticCreatures.core.models.cards.monster;
 
 public enum CreatureType {
     GOBLIN (0.5),

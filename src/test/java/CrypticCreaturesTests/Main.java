@@ -1,7 +1,7 @@
 package CrypticCreaturesTests;
 
-import CrypticCreatures.models.cards.*;
-import CrypticCreatures.models.cards.monster.MonsterCard;
+import CrypticCreatures.core.models.cards.Card;
+import CrypticCreatures.core.models.cards.monster.MonsterCard;
 
 public class Main {
     public static void main(String[] args) {

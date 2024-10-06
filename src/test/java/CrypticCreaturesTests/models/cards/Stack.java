@@ -1,6 +1,6 @@
 package CrypticCreaturesTests.models.cards;
 
-import CrypticCreatures.models.cards.Card;
+import CrypticCreatures.core.models.cards.Card;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class Stack {
 
     }
 
-    public void addCards(List<CrypticCreatures.models.cards.Card>newCards){
+    public void addCards(List<Card>newCards){
         this.Cards.addAll(newCards);
     }
 
