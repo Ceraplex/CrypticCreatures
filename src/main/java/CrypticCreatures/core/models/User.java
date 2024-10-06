@@ -9,6 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
 
+    @JsonProperty("Username")
+    private String username;
+    @JsonProperty("Password")
+    private String password;
+
+    private String token;
+    private Stack stack = new Stack();
+    private Stack deck = new Stack();
+    private int money = 0;
+    private int elo = 100;
+
     public static void setStack(Stack stack) {
         //TODO: user managed stack for fights
     }
@@ -36,13 +47,5 @@ public class User {
         return this.getUsername().hashCode();
     }
 
-    @JsonProperty("Username")
-    private String username;
-    @JsonProperty("Password")
-    private String password;
 
-    private String token;
-    private final Stack stack = new Stack();
-    private final Stack deck = new Stack();
-    private int elo = 100;
 }
