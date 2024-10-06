@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
 
-    public User(String Username, String Password) {
-        this.username = Username;
-        this.password = Password;
-        this.token = Username + "-mtcgToken";
-    }
-
     public static void setStack(Stack stack) {
         //TODO: user managed stack for fights
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+        this.token = username + "-mtcgToken";
     }
 
     @Override

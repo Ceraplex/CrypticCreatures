@@ -62,12 +62,17 @@ public class UserController {
     private static void loginUser(String body, BufferedWriter out, Database database) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(body, User.class);
-        if(database.findUser(user)){
+        if(database.verifyUser(user)){
             out.write("HTTP/1.1 200 Success\r\n");
             out.write("Content-Type: text/plain\r\n");
             out.write("\r\n");
             out.write(user.getToken());
             out.flush();
+        }else{
+            out.write("HTTP/1.1 401 Unauthorized\r\n");
+            out.write("Content-Type: text/plain\r\n");
+            out.write("\r\n");
+            out.write("Login failed\r\n");
         }
     }
 

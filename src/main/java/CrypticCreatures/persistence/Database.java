@@ -2,29 +2,32 @@ package CrypticCreatures.persistence;
 
 import CrypticCreatures.core.models.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Database {
-    private List<User> users;
+    private Map<String, User> users;
 
     public Database(){
-        users = new ArrayList<User>();
+        users = new HashMap<>();
     }
 
     public Boolean addUser(User user){
-        if(users.contains(user)){
+        if(users.containsKey(user.getUsername())){
             return false;
         }
-        users.add(user);
+        users.put(user.getUsername(), user);
         return true;
     }
 
     public Boolean findUser(User user){
-        if(users.contains(user)){
-            return true;
-        } else {
-            return false;
-        }
+        return users.containsKey(user.getUsername());
+    }
+
+    public Boolean verifyUser(User user){
+        User existingUser = users.get(user.getUsername());
+
+        //return whether User exist and PW matches
+        return existingUser != null && user.getPassword().equals(existingUser.getPassword());
     }
 }
