@@ -1,5 +1,8 @@
 package CrypticCreatures.core.models.cards;
 
+import lombok.Data;
+
+@Data
 public abstract class Card {
     protected String name;
     protected int dmg;

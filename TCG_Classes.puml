@@ -1,97 +1,133 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-package CrypticCreatures.models{
-    package cards{
-        Stack -- Card
+package CrypticCreatures{
 
-        Card <|-- SpellCard
+    package models{
+        package cards{
+            Stack -- Card
 
-        SpellCard - ElementType
-        SpellCard -- Quality
+            Card <|-- SpellCard
 
-        class Stack{
-            -private List<Card> cards
-            +public void addCards(Stack stack)
-            +public void addCard(Card card)
-        }
+            SpellCard - ElementType
+            SpellCard -- Quality
 
-        abstract class Card{
-            -protected String name
-            -protected int dmg
-            -protected int elementType
-            +public void printCard()
-        }
+            class Stack{
+                -private List<Card> cards
+                +public void addCards(Stack stack)
+                +public void addCard(Card card)
+            }
 
-        class SpellCard{
-            +public void printCard()
-        }
-
-        package monster{
-            Card <|-- MonsterCard
-
-            MonsterCard - CreatureType
-            ElementType - MonsterCard
-
-            MonsterCard -- Quality
-
-            class MonsterCard{
-                -CreatureType creatureType;
+            abstract class Card{
+                -protected String name
+                -protected int dmg
+                -protected int elementType
                 +public void printCard()
             }
-            enum CreatureType {
-                        GOBLIN (0.5),
-                        DRAGON (4.0),
-                        ELF (3.0),
-                        WIZARD (3.5),
-                        ORK (1.2),
-                        KRAKEN (5.0),
-                        KNIGHTS (2.5)
 
-                        -private double dmgMultiplier
-                        +CreatureType(double dmgMultiplier)
+            class SpellCard{
+                +public void printCard()
+            }
+
+            package monster{
+                Card <|-- MonsterCard
+
+                MonsterCard - CreatureType
+                ElementType - MonsterCard
+
+                MonsterCard -- Quality
+
+                class MonsterCard{
+                    -CreatureType creatureType;
+                    +public void printCard()
+                }
+                enum CreatureType {
+                            GOBLIN (0.5),
+                            DRAGON (4.0),
+                            ELF (3.0),
+                            WIZARD (3.5),
+                            ORK (1.2),
+                            KRAKEN (5.0),
+                            KNIGHTS (2.5)
+
+                            -private double dmgMultiplier
+                            +CreatureType(double dmgMultiplier)
+                }
+            }
+
+            enum Quality {
+                COMMON,
+                RARE,
+                EPIC,
+                LEGENDARY
+            }
+            enum ElementType {
+                FIRE,
+                WATER,
+                ENERGY,
+                EARTH,
+                AIR
+            }
+
+
+        }
+
+        package service{
+            class Battle{
+                +public static void fight(User player1, User player2)
+                +private static void round(Card card1, Card card2)
+                +private static void battleLog()
+            }
+            class Shop{
+                public static Package generatePackage()
             }
         }
-
-        enum Quality {
-            COMMON,
-            RARE,
-            EPIC,
-            LEGENDARY
-        }
-        enum ElementType {
-            FIRE,
-            WATER,
-            ENERGY,
-            EARTH,
-            AIR
-        }
-
-
-    }
-
-    package service{
-        class Battle{
-            +public static void fight(User player1, User player2)
-            +private static void round(Card card1, Card card2)
-            +private static void battleLog()
-        }
-        class Shop{
-            public static Package generatePasckage()
+        class User{
+            -private Stack userStack
+            -private Stack userDeck
+            -private int elo = 100
+            +public static Stack getStack()
+            +public static Stack getDeck()
+            +public static void setStack(Stack stack)
         }
     }
-    class User{
-        -private Stack userStack
-        -private Stack userDeck
-        -private int elo = 100
-        +public static Stack getStack()
-        +public static Stack getDeck()
-        +public static void setStack(Stack stack)
-    }
-
     package utils{
         class Database
     }
 
+    package api{
+        class Dispatcher{
+            - private Database database
+            - private final Socket clientsocket
+            - private BufferedReader in
+            - private BufferedWriter out
+            + public void run()
+        }
+        class UserController{
+            + public static void handleRequest(String method, String path, String body, BufferedWriter out, Database database)
+            + public static void registerUser(String body, BufferedWriter out, Database database)
+            + public static void loginUser(String body, BufferedWriter out, Database database)
+        }
+        class CardController{
+        }
+        class DeckController{
+        }
+        class PackageController{
+        }
+        class StatsController{
+        }
+        class TradingController{
+        }
+    }
+    package httpServer{
+        package http{
+            enum ContentType{}
+            enum HttpMethod{}
+            class Request{}
+            class Response{}
+        }
+        class Server{
+        }
+    }
 }
 @enduml

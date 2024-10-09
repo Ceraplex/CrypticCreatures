@@ -10,8 +10,7 @@ public class Stack {
 
     }
 
-    public void addCards(Stack stack){
-
+    public void addCards(Stack stack) {
     }
 
     public void addCard(Card card){
