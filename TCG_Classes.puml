@@ -82,6 +82,8 @@ package CrypticCreatures{
                 public static Package generatePackage()
             }
         }
+
+        User -- Stack
         class User{
             -private Stack userStack
             -private Stack userDeck
@@ -92,10 +94,17 @@ package CrypticCreatures{
         }
     }
     package utils{
-        class Database
+        Database -- User
+        class Database{
+            - private Map<String, User> userStack
+            + public Boolean addUser(User user)
+            + public Boolean findUser(User user)
+            + public Boolean verifyUser(User user)
+        }
     }
 
     package api{
+        Dispatcher -- Database
         class Dispatcher{
             - private Database database
             - private final Socket clientsocket
@@ -120,6 +129,7 @@ package CrypticCreatures{
         }
     }
     package httpServer{
+        Server -- Database
         package http{
             enum ContentType{}
             enum HttpMethod{}
@@ -127,6 +137,9 @@ package CrypticCreatures{
             class Response{}
         }
         class Server{
+            - private Database database
+            - private final ExecutorService threadPool
+            + start(int port)
         }
     }
 }
