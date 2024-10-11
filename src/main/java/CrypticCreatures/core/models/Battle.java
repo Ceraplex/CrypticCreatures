@@ -1,6 +1,5 @@
-package CrypticCreatures.core.service;
+package CrypticCreatures.core.models;
 
-import CrypticCreatures.core.models.User;
 import CrypticCreatures.core.models.cards.Card;
 import CrypticCreatures.core.models.cards.spell.SpellCard;
 

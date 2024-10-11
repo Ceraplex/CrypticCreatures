@@ -1,8 +1,6 @@
-package CrypticCreatures.core.service;
+package CrypticCreatures.core.models;
 
 import CrypticCreatures.core.models.cards.Package;
-
-import java.util.List;
 
 //buy Packages, sell Cards, trade Cards
 public class Shop {
