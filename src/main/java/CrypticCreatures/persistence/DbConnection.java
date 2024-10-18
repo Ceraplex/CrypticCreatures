@@ -1,4 +1,4 @@
-package at.fhtw.swen1.playground.dao;
+package CrypticCreatures.persistence;
 
 import java.io.Closeable;
 import java.sql.*;

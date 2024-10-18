@@ -4,7 +4,7 @@ import at.fhtw.swen1.playground.model.PlaygroundPointData;
 
 import java.util.*;
 
-public class PlaygroundPointDaoMemory implements Dao<PlaygroundPointData> {
+public class UsersDaoMemory implements Dao<PlaygroundPointData> {
     private Map<Integer, PlaygroundPointData> playgroundPoints = new HashMap<>();
 
     @Override

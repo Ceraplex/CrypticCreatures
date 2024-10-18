@@ -1,6 +1,7 @@
-package at.fhtw.swen1.playground.dao;
+package CrypticCreatures.persistence.dao;
 
-import at.fhtw.swen1.playground.model.PlaygroundPointData;
+import CrypticCreatures.persistence.DbConnection;
+import CrypticCreatures.core.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
+public class UsersDaoDb implements Dao<User> {
 
     /**
      * initializes the database with its tables
@@ -45,7 +46,7 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
     }
 
     @Override
-    public Optional<PlaygroundPointData> get(int id) {
+    public Optional<User> get(int id) {
         try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 SELECT fid, objectid, shape, anlname, bezirk, spielplatzdetail, typdetail, seannocaddata 
                 FROM playgroundpoints 
@@ -55,7 +56,7 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
             statement.setInt( 1, id );
             ResultSet resultSet = statement.executeQuery();
             if( resultSet.next() ) {
-                return Optional.of( new PlaygroundPointData(
+                return Optional.of( new User(
                         resultSet.getString(1),
                         resultSet.getInt( 2 ),
                         resultSet.getString( 3 ),
@@ -73,8 +74,8 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
     }
 
     @Override
-    public Collection<PlaygroundPointData> getAll() {
-        ArrayList<PlaygroundPointData> result = new ArrayList<>();
+    public Collection<User> getAll() {
+        ArrayList<User> result = new ArrayList<>();
         try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 SELECT fid, objectid, shape, anlname, bezirk, spielplatzdetail, typdetail, seannocaddata 
                 FROM playgroundpoints 
@@ -82,7 +83,7 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
         ) {
             ResultSet resultSet = statement.executeQuery();
             while( resultSet.next() ) {
-                result.add( new PlaygroundPointData(
+                result.add( new User(
                         resultSet.getString(1),
                         resultSet.getInt( 2 ),
                         resultSet.getString( 3 ),
@@ -100,21 +101,21 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
     }
 
     @Override
-    public void save(PlaygroundPointData playgroundPointData) {
+    public void save(User User) {
         try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 INSERT INTO playgroundpoints 
                 (fid, objectid, shape, anlname, bezirk, spielplatzdetail, typdetail, seannocaddata) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                 """ )
         ) {
-            statement.setString(1, playgroundPointData.getFId() );
-            statement.setInt( 2, playgroundPointData.getObjectId() );
-            statement.setString(3, playgroundPointData.getShape() );
-            statement.setString( 4, playgroundPointData.getAnlName() );
-            statement.setInt( 5, playgroundPointData.getBezirk() );
-            statement.setString( 6, playgroundPointData.getSpielplatzDetail() );
-            statement.setString( 7, playgroundPointData.getTypDetail() );
-            statement.setString( 8, playgroundPointData.getSeAnnoCadData() );
+            statement.setString(1, User.getFId() );
+            statement.setInt( 2, User.getObjectId() );
+            statement.setString(3, User.getShape() );
+            statement.setString( 4, User.getAnlName() );
+            statement.setInt( 5, User.getBezirk() );
+            statement.setString( 6, User.getSpielplatzDetail() );
+            statement.setString( 7, User.getTypDetail() );
+            statement.setString( 8, User.getSeAnnoCadData() );
             statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -122,7 +123,7 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
     }
 
     @Override
-    public void update(PlaygroundPointData playgroundPoint, String[] params) {
+    public void update(User playgroundPoint, String[] params) {
         // update the item
         playgroundPoint.setFId( Objects.requireNonNull( params[0], "fId cannot be null" ) );
         playgroundPoint.setObjectId( Integer.parseInt(Objects.requireNonNull( params[1], "ObjectId cannot be null" ) ) );
@@ -155,13 +156,13 @@ public class PlaygroundPointDaoDb implements Dao<PlaygroundPointData> {
     }
 
     @Override
-    public void delete(PlaygroundPointData playgroundPointData) {
+    public void delete(User User) {
         try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 DELETE FROM playgroundpoints 
                 WHERE objectid = ?;
                 """)
         ) {
-            statement.setInt( 1, playgroundPointData.getObjectId() );
+            statement.setInt( 1, User.getObjectId() );
             statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
