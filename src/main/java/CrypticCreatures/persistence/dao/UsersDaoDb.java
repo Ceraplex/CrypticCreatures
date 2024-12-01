@@ -57,6 +57,8 @@ public class UsersDaoDb implements Dao<User> {
             ResultSet resultSet = statement.executeQuery();
             if( resultSet.next() ) {
                 return Optional.of( new User(
+                        //get args from SQL select statement
+                        /*
                         resultSet.getString(1),
                         resultSet.getInt( 2 ),
                         resultSet.getString( 3 ),
@@ -65,6 +67,7 @@ public class UsersDaoDb implements Dao<User> {
                         resultSet.getString( 6 ),
                         resultSet.getString( 7 ),
                         resultSet.getString( 8 )
+                        */
                 ) );
             }
         } catch (SQLException throwables) {
@@ -84,6 +87,7 @@ public class UsersDaoDb implements Dao<User> {
             ResultSet resultSet = statement.executeQuery();
             while( resultSet.next() ) {
                 result.add( new User(
+                        /*
                         resultSet.getString(1),
                         resultSet.getInt( 2 ),
                         resultSet.getString( 3 ),
@@ -92,6 +96,8 @@ public class UsersDaoDb implements Dao<User> {
                         resultSet.getString( 6 ),
                         resultSet.getString( 7 ),
                         resultSet.getString( 8 )
+
+                         */
                 ) );
             }
         } catch (SQLException throwables) {
@@ -108,6 +114,7 @@ public class UsersDaoDb implements Dao<User> {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                 """ )
         ) {
+            /*
             statement.setString(1, User.getFId() );
             statement.setInt( 2, User.getObjectId() );
             statement.setString(3, User.getShape() );
@@ -117,6 +124,8 @@ public class UsersDaoDb implements Dao<User> {
             statement.setString( 7, User.getTypDetail() );
             statement.setString( 8, User.getSeAnnoCadData() );
             statement.execute();
+
+             */
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -125,6 +134,7 @@ public class UsersDaoDb implements Dao<User> {
     @Override
     public void update(User playgroundPoint, String[] params) {
         // update the item
+        /*
         playgroundPoint.setFId( Objects.requireNonNull( params[0], "fId cannot be null" ) );
         playgroundPoint.setObjectId( Integer.parseInt(Objects.requireNonNull( params[1], "ObjectId cannot be null" ) ) );
         playgroundPoint.setShape( Objects.requireNonNull( params[2] ) );
@@ -133,15 +143,15 @@ public class UsersDaoDb implements Dao<User> {
         playgroundPoint.setSpielplatzDetail( Objects.requireNonNull( params[5], "SpielplatzDetail cannot be null" ) );
         playgroundPoint.setTypDetail( Objects.requireNonNull( params[6], "TypDetail cannot be null" ) );
         playgroundPoint.setSeAnnoCadData( params[7] );
-
+        */
         // persist the updated item
         try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 UPDATE playgroundpoints 
                 SET fid = ?, shape = ?, anlname = ?, bezirk = ?, spielplatzdetail = ?, typdetail = ?, seannocaddata = ? 
                 WHERE objectid = ?;
                 """)
-        ) {
-            statement.setString(1, playgroundPoint.getFId() );
+        ){
+            /*statement.setString(1, playgroundPoint.getFId() );
             statement.setString(2, playgroundPoint.getShape() );
             statement.setString( 3, playgroundPoint.getAnlName() );
             statement.setInt( 4, playgroundPoint.getBezirk() );
@@ -149,7 +159,7 @@ public class UsersDaoDb implements Dao<User> {
             statement.setString( 6, playgroundPoint.getTypDetail() );
             statement.setString( 7, playgroundPoint.getSeAnnoCadData() );
             statement.setInt( 8, playgroundPoint.getObjectId() );
-            statement.execute();
+            statement.execute();*/
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -162,8 +172,8 @@ public class UsersDaoDb implements Dao<User> {
                 WHERE objectid = ?;
                 """)
         ) {
-            statement.setInt( 1, User.getObjectId() );
-            statement.execute();
+            /*statement.setInt( 1, User.getObjectId() );
+            statement.execute();*/
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
