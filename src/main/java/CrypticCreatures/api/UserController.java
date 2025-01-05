@@ -4,38 +4,19 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 import CrypticCreatures.core.models.User;
+import CrypticCreatures.httpServer.http.HttpRequest;
 import CrypticCreatures.persistence.Database;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserController {
 
-    public static void handleRequest(String method, String path, String body, BufferedWriter out, Database database) throws IOException {
-        if (method.equals("GET")) {
-            //TODO: replace GET section with correct routes
-            if (path.equals("/users")) {
-                sendUserList(out);
-            } else if (path.matches("/users/\\d+")) {
-                sendUserDetails(out, path);
-            } else {
-                sendNotFound(out);
-            }
-
-        } else if (method.equals("POST")) {
-            if(path.equals("/users")) {
-                registerUser(body, out, database);
-            } else if (path.equals("/sessions")) {
-                loginUser(body, out, database);
-            }
-        } else {
-            sendMethodNotAllowed(out);
-        }
-    }
-
-
-    private static void registerUser(String body, BufferedWriter out, Database database) throws IOException {
+    // METHOD: POST
+    public static void registerUser(HttpRequest request, BufferedWriter out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(body, User.class);
-        if(database.addUser(user)){
+        User user = mapper.readValue(request.getBody(), User.class);
+
+        //TODO: add user to DB and reply
+        /*if(database.addUser(user)){
             //Success:
             out.write("HTTP/1.1 201 Created\r\n");
             out.write("\r\n");
@@ -56,27 +37,23 @@ public class UserController {
             //TODO: remove debug info
             System.out.println("user already exists");
             System.out.println(user.toString());
-        }
+        }*/
     }
 
-    private static void loginUser(String body, BufferedWriter out, Database database) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(body, User.class);
-        if(database.verifyUser(user)){
-            out.write("HTTP/1.1 200 Success\r\n");
-            out.write("Content-Type: text/plain\r\n");
-            out.write("\r\n");
-            out.write(user.getToken());
-            out.flush();
-        }else{
-            out.write("HTTP/1.1 401 Unauthorized\r\n");
-            out.write("Content-Type: text/plain\r\n");
-            out.write("\r\n");
-            out.write("Login failed\r\n");
-        }
+    //METHOD: GET
+    public static void getUserData(HttpRequest request, BufferedWriter out) throws IOException{
+        String userId = request.getPath().split("/")[2];
+        out.write("HTTP/1.1 200 OK\r\n");
+        out.write("Content-Type: application/json\r\n");
+        out.write("\r\n");
+        out.write("{\"id\": " + userId + ", \"name\": \"John Doe\"}");
+        out.flush();
     }
 
-
+    //METHOD: PUT
+    private static void updateUser(HttpRequest request, BufferedWriter out) throws IOException {
+        //TODO: implement update user
+    }
 
 
     //Example request processing #######################################################################################
@@ -86,15 +63,6 @@ public class UserController {
         out.write("Content-Type: application/json\r\n");
         out.write("\r\n");
         out.write("[{\"id\": 1, \"name\": \"John\"}, {\"id\": 2, \"name\": \"Jane\"}]");
-        out.flush();
-    }
-
-    private static void sendUserDetails(BufferedWriter out, String path) throws IOException {
-        String userId = path.split("/")[2];
-        out.write("HTTP/1.1 200 OK\r\n");
-        out.write("Content-Type: application/json\r\n");
-        out.write("\r\n");
-        out.write("{\"id\": " + userId + ", \"name\": \"John Doe\"}");
         out.flush();
     }
 

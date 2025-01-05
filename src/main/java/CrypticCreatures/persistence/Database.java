@@ -1,5 +1,6 @@
 package CrypticCreatures.persistence;
 
+//TODO: Replace Class with real Database
 import CrypticCreatures.core.models.User;
 
 import java.util.HashMap;
