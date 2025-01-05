@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import CrypticCreatures.core.models.User;
 import CrypticCreatures.httpServer.http.HttpRequest;
-import CrypticCreatures.persistence.Database;
+import CrypticCreatures.persistence.dao.UsersDaoDb;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserController {
@@ -15,8 +15,10 @@ public class UserController {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(request.getBody(), User.class);
 
+        UsersDaoDb usersDao = new UsersDaoDb();
+
         //TODO: add user to DB and reply
-        /*if(database.addUser(user)){
+        if(usersDao.save(user)){
             //Success:
             out.write("HTTP/1.1 201 Created\r\n");
             out.write("\r\n");
@@ -37,7 +39,7 @@ public class UserController {
             //TODO: remove debug info
             System.out.println("user already exists");
             System.out.println(user.toString());
-        }*/
+        }
     }
 
     //METHOD: GET

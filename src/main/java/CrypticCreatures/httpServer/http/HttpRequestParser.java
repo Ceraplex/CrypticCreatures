@@ -6,14 +6,13 @@ import java.io.IOException;
 
 public class HttpRequestParser {
 
-    public static HttpRequest buildHttpRequest(BufferedReader in, BufferedWriter out) throws IOException {
+    public static HttpRequest buildHttpRequest(BufferedReader in) throws IOException {
 
         // ### Read Path and Method ###
         String requestLine = in.readLine();
         while (requestLine != null && requestLine.isEmpty()) {
             requestLine = in.readLine();
         }
-
         // If no request line, return null or send an error response
         if (requestLine == null || requestLine.isEmpty()) {
             return null;

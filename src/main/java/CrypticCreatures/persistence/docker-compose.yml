@@ -3,13 +3,11 @@ version: "3.8"
 services:
   database:
     build: .
+    container_name: cryptic_creatures_db
     ports:
-      # choose an open port if you can't use 5432.
-      # the first port is the port of your local machine
       - "5432:5432"
     volumes:
-      - CrypticCreaturesDB-data:/var/lib/postgresql/data/ # persist data even if container shuts down
-    # set environment variables for postgres
+      - CrypticCreaturesDB-data:/var/lib/postgresql/data/
 
     environment:
       - POSTGRES_USER=admin

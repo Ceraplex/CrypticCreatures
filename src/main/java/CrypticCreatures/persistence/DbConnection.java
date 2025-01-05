@@ -8,15 +8,6 @@ public class DbConnection implements Closeable {
 
     private Connection connection;
 
-    /**
-     * Loads the PostgreSql JDBC-driver
-     * Don't forget to add the dependency in the pom.xml, like
-     *         <dependency>
-     *             <groupId>org.postgresql</groupId>
-     *             <artifactId>postgresql</artifactId>
-     *             <version>42.2.18.jre7</version>
-     *         </dependency>
-     */
     public DbConnection() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -27,11 +18,11 @@ public class DbConnection implements Closeable {
     }
 
     public Connection connect(String database) throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://192.168.10.221:5432/" + database, "postgres", "mtQFUeXsk1gr");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + database,"admin","password123");
     }
 
     public Connection connect() throws SQLException {
-        return connect("simpledatastore");
+        return connect("CrypticCreaturesDB");
     }
 
 

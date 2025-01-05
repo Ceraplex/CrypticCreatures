@@ -14,7 +14,7 @@ public class SessionController {
         User user = mapper.readValue(request.getBody(), User.class);
 
         //TODO verify user in DB for if statement below
-        if(){
+        /*if(){
             out.write("HTTP/1.1 200 Success\r\n");
             out.write("Content-Type: text/plain\r\n");
             out.write("\r\n");
@@ -25,7 +25,7 @@ public class SessionController {
             out.write("Content-Type: text/plain\r\n");
             out.write("\r\n");
             out.write("Login failed\r\n");
-        }
+        }*/
     }
 
 }

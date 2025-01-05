@@ -13,6 +13,7 @@ public class User {
     private String username;
     @JsonProperty("Password")
     private String password;
+    private Integer profilePageId;
 
     private String token;
     private Stack stack = new Stack();

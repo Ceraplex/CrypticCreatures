@@ -1,7 +1,6 @@
 package CrypticCreatures.httpServer;
 
 import CrypticCreatures.api.Dispatcher;
-import CrypticCreatures.persistence.Database;
 
 import java.net.ServerSocket;
 import java.net.Socket;

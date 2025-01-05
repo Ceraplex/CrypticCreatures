@@ -11,8 +11,10 @@ CREATE TABLE profile_pages
 CREATE TABLE users
 (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    money INT NOT NULL CHECK (money >= 0),
+    elo INT NOT NULL CHECK (elo >= 0),
     profile_page_id INT UNIQUE,
     CONSTRAINT fk_profile_page FOREIGN KEY (profile_page_id)
         REFERENCES profile_pages (id)

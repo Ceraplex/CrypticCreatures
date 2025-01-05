@@ -16,11 +16,11 @@ public interface Dao<T> {
     Collection<T> getAll();
 
     // CREATE
-    void save(T t);
+    boolean save(T t);
 
     // UPDATE
-    void update(T t, String[] params);
+    boolean update(T t, String[] params);
 
     // DELETE
-    void delete(T t);
+    boolean delete(T t);
 }

@@ -11,39 +11,13 @@ import java.util.Optional;
 
 public class UsersDaoDb implements Dao<User> {
 
-    /**
-     * initializes the database with its tables
-     */
-    // PostgreSQL documentation: https://www.postgresqltutorial.com/postgresql-create-table/
-    public static void initDb() {
-        // re-create the database
-        try (Connection connection = DbConnection.getInstance().connect("")) {
-            DbConnection.executeSql(connection, "DROP DATABASE simpledatastore", true );
-            DbConnection.executeSql(connection,  "CREATE DATABASE simpledatastore", true );
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    private final DbConnection dbConnection;
 
-        // create the table
-        // PostgreSQL documentation: https://www.postgresqltutorial.com/postgresql-create-table/
-        try {
-            DbConnection.getInstance().executeSql("""
-                CREATE TABLE IF NOT EXISTS PlaygroundPoints (
-                    fId VARCHAR(50) NOT NULL,
-                    objectId INT PRIMARY KEY, 
-                    shape VARCHAR(50) NOT NULL,
-                    anlName VARCHAR(50) NOT NULL,
-                    bezirk INT NOT NULL,
-                    spielplatzDetail VARCHAR(255) NOT NULL,
-                    typDetail VARCHAR(255) NOT NULL,
-                    seAnnoCadData VARCHAR(255)
-                )
-                """);
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public UsersDaoDb() {
+        // Get the singleton instance of your custom DbConnection wrapper
+        this.dbConnection = DbConnection.getInstance();
     }
+
 
     @Override
     public Optional<User> get(int id) {
@@ -107,76 +81,59 @@ public class UsersDaoDb implements Dao<User> {
     }
 
     @Override
-    public void save(User User) {
-        try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                INSERT INTO playgroundpoints 
-                (fid, objectid, shape, anlname, bezirk, spielplatzdetail, typdetail, seannocaddata) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-                """ )
-        ) {
-            /*
-            statement.setString(1, User.getFId() );
-            statement.setInt( 2, User.getObjectId() );
-            statement.setString(3, User.getShape() );
-            statement.setString( 4, User.getAnlName() );
-            statement.setInt( 5, User.getBezirk() );
-            statement.setString( 6, User.getSpielplatzDetail() );
-            statement.setString( 7, User.getTypDetail() );
-            statement.setString( 8, User.getSeAnnoCadData() );
-            statement.execute();
+    public boolean save(User user) {
+        try {
+            // 1) Check if username already exists
+            String sqlCheck = "SELECT COUNT(*) FROM users WHERE username = ?";
+            try (PreparedStatement preparedCheck = dbConnection.prepareStatement(sqlCheck)) {
+                preparedCheck.setString(1, user.getUsername());
+                try (ResultSet checkResult = preparedCheck.executeQuery()) {
+                    if (checkResult.next() && checkResult.getInt(1) > 0) {
+                        // Username is already in use
+                        return false;
+                    }
+                }
+            }
 
-             */
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            // 2) Insert new user (include money, elo, and optionally profile_page_id)
+            String sqlInsert =
+                    "INSERT INTO users (username, password, money, elo, profile_page_id) " +
+                            "VALUES (?, ?, ?, ?, ?)";
+
+            try (PreparedStatement preparedInsert = dbConnection.prepareStatement(sqlInsert)) {
+                preparedInsert.setString(1, user.getUsername());
+                preparedInsert.setString(2, user.getPassword());
+                preparedInsert.setInt(3, user.getMoney());  // Must be >= 0, per your schema
+                preparedInsert.setInt(4, user.getElo());    // Must be >= 0, per your schema
+
+                // If the user has no associated profile_page_id, set it to null
+                if (user.getProfilePageId() == null) {
+                    preparedInsert.setNull(5, java.sql.Types.INTEGER);
+                } else {
+                    preparedInsert.setInt(5, user.getProfilePageId());
+                }
+
+                int rowsAffected = preparedInsert.executeUpdate();
+                return rowsAffected > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
+
+    //TODO: implement update user
     @Override
-    public void update(User playgroundPoint, String[] params) {
-        // update the item
-        /*
-        playgroundPoint.setFId( Objects.requireNonNull( params[0], "fId cannot be null" ) );
-        playgroundPoint.setObjectId( Integer.parseInt(Objects.requireNonNull( params[1], "ObjectId cannot be null" ) ) );
-        playgroundPoint.setShape( Objects.requireNonNull( params[2] ) );
-        playgroundPoint.setAnlName( Objects.requireNonNull( params[3] ) );
-        playgroundPoint.setBezirk( Integer.parseInt(Objects.requireNonNull( params[4], "Bezirk cannot be null" ) ) );
-        playgroundPoint.setSpielplatzDetail( Objects.requireNonNull( params[5], "SpielplatzDetail cannot be null" ) );
-        playgroundPoint.setTypDetail( Objects.requireNonNull( params[6], "TypDetail cannot be null" ) );
-        playgroundPoint.setSeAnnoCadData( params[7] );
-        */
-        // persist the updated item
-        try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                UPDATE playgroundpoints 
-                SET fid = ?, shape = ?, anlname = ?, bezirk = ?, spielplatzdetail = ?, typdetail = ?, seannocaddata = ? 
-                WHERE objectid = ?;
-                """)
-        ){
-            /*statement.setString(1, playgroundPoint.getFId() );
-            statement.setString(2, playgroundPoint.getShape() );
-            statement.setString( 3, playgroundPoint.getAnlName() );
-            statement.setInt( 4, playgroundPoint.getBezirk() );
-            statement.setString( 5, playgroundPoint.getSpielplatzDetail() );
-            statement.setString( 6, playgroundPoint.getTypDetail() );
-            statement.setString( 7, playgroundPoint.getSeAnnoCadData() );
-            statement.setInt( 8, playgroundPoint.getObjectId() );
-            statement.execute();*/
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public boolean update(User playgroundPoint, String[] params) {
+        return true;
     }
 
+    //TODO: implement delete user
     @Override
-    public void delete(User User) {
-        try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                DELETE FROM playgroundpoints 
-                WHERE objectid = ?;
-                """)
-        ) {
-            /*statement.setInt( 1, User.getObjectId() );
-            statement.execute();*/
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public boolean delete(User User) {
+        return true;
     }
 
 }
