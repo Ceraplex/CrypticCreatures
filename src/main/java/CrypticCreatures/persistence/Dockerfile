@@ -1,4 +1,9 @@
-FROM ubuntu:latest
-LABEL authors="domin"
+# use image from repo
+FROM postgres:alpine
 
-ENTRYPOINT ["top", "-b"]
+# set working directory
+WORKDIR /home
+
+# copy files from host to container
+# init sql file
+COPY init.sql /docker-entrypoint-initdb.d/
