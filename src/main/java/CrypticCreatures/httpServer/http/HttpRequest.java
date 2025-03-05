@@ -20,7 +20,6 @@ public class HttpRequest {
     }
 
     public void setHttpMethod(String method) {
-        //TODO: verify case sensitivity of method
         this.method = HttpMethod.valueOf(method);
     }
 }

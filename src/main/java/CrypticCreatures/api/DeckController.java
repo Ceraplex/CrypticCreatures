@@ -1,10 +1,14 @@
 package CrypticCreatures.api;
 
+import CrypticCreatures.httpServer.http.HttpRequest;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public class DeckController {
-    public static void handleRequest(String method, String path, String body, BufferedWriter out) throws IOException {
+public class DeckController implements Controller {
+
+    @Override
+    public void handleRequest(HttpRequest request, BufferedWriter out) throws IOException {
 
     }
 }

@@ -2,14 +2,34 @@ package CrypticCreatures.api;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 
-import CrypticCreatures.core.models.User;
-import CrypticCreatures.httpServer.http.HttpRequest;
-import CrypticCreatures.persistence.dao.UsersDaoDb;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class UserController {
+import CrypticCreatures.core.models.User;
+import CrypticCreatures.httpServer.http.HttpMethod;
+import CrypticCreatures.httpServer.http.HttpRequest;
+import CrypticCreatures.persistence.dao.UsersDaoDb;
+import CrypticCreatures.security.Authorizer;
 
+public class UserController implements Controller {
+
+    @Override
+    public void handleRequest(HttpRequest request, BufferedWriter out) throws IOException {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+            getUserData(request, out);
+        }
+        if (request.getMethod().equals(HttpMethod.POST)) {
+            registerUser(request, out);
+        }
+        if (request.getMethod().equals(HttpMethod.PUT)) {
+            updateUser(request, out);
+        }
+        if (request.getMethod().equals(HttpMethod.DELETE)) {
+            //TODO: optional implement
+            sendMethodNotAllowed(out);
+        }
+    }
     // METHOD: POST
     public static void registerUser(HttpRequest request, BufferedWriter out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -17,7 +37,6 @@ public class UserController {
 
         UsersDaoDb usersDao = new UsersDaoDb();
 
-        //TODO: add user to DB and reply
         if(usersDao.save(user)){
             //Success:
             out.write("HTTP/1.1 201 Created\r\n");
@@ -42,19 +61,38 @@ public class UserController {
         }
     }
 
+    //TODO: test
     //METHOD: GET
     public static void getUserData(HttpRequest request, BufferedWriter out) throws IOException{
-        String userId = request.getPath().split("/")[2];
-        out.write("HTTP/1.1 200 OK\r\n");
-        out.write("Content-Type: application/json\r\n");
-        out.write("\r\n");
-        out.write("{\"id\": " + userId + ", \"name\": \"John Doe\"}");
-        out.flush();
+        if(Authorizer.authorizeHttpRequest(request)){
+            String username = Authorizer.getUsernameFromRequest(request);
+            UsersDaoDb usersDao = new UsersDaoDb();
+            try{
+                User user = usersDao.getUserByUsername(username);
+                if (user != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    String json = mapper.writeValueAsString(user);
+                    out.write("HTTP/1.1 200 OK\r\n\r\n" + json);
+                } else {
+                    sendNotFound(out);
+                }
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        else {
+            sendUnauthorized(out);
+        }
     }
 
     //METHOD: PUT
     private static void updateUser(HttpRequest request, BufferedWriter out) throws IOException {
-        //TODO: implement update user
+        if(Authorizer.authorizeHttpRequest(request)){
+            //TODO: update user data
+        }
+        else {
+            sendUnauthorized(out);
+        }
     }
 
 
@@ -81,6 +119,14 @@ public class UserController {
         out.write("Content-Type: text/plain\r\n");
         out.write("\r\n");
         out.write("405 - Method Not Allowed");
+        out.flush();
+    }
+
+    private static void sendUnauthorized(BufferedWriter out) throws IOException {
+        out.write("HTTP/1.1 401 Unauthorized\r\n");
+        out.write("Content-Type: text/plain\r\n");
+        out.write("\r\n");
+        out.write("401 - Unauthorized");
         out.flush();
     }
 }

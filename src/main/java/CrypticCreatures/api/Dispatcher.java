@@ -32,47 +32,8 @@ public class Dispatcher implements Runnable {
             System.out.println("Headers: " + request.getHeaders());
             System.out.println("Body: " + request.getBody());
 
-            if(request.getPath().startsWith("/users")){
-                //POST, GET, PUT
-                handleUsers(request, out);
-            }
-            if(request.getPath().startsWith("/sessions")){
-                //POST
-                handleSessions(request, out);
-            }
-            if(request.getPath().startsWith("/packages")){
-                //POST
-                handlePackages(request, out);
-            }
-            if(request.getPath().startsWith("/transactions/packages")){
-                //POST
-                handleTransaction(request, out);
-            }
-            if(request.getPath().startsWith("/cards")){
-                //GET
-                handleCards(request, out);
-            }
-            if(request.getPath().startsWith("/deck")){
-                //GET, GET format plain, PUT
-                handleDeck(request, out);
-            }
-            if(request.getPath().startsWith("/stats")){
-                //GET
-                handleStats(request, out);
-            }
-            if(request.getPath().startsWith("/tradings")){
-                //GET, POST, PUT, DELETE
-                handleTradings(request, out);
-            }
-            if(request.getPath().startsWith("/scoreboard") || request.getPath().startsWith("/stats")){
-                //GET
-                handleScoreboard(request, out);
-            }
-            if(request.getPath().startsWith("/battles")){
-                //POST
-                handleBattle(request, out);
-            }
-
+            Controller controller = getControllerForPath(request.getPath());
+            controller.handleRequest(request, out);
 
         } catch (IOException e) {
             //TODO: check throws further down
@@ -81,77 +42,38 @@ public class Dispatcher implements Runnable {
         }
     }
 
-    private void handleUsers(HttpRequest request, BufferedWriter out) throws IOException {
-        if(request.getMethod().equals(HttpMethod.POST)){
-            UserController.registerUser(request, out);
-        } else if(request.getMethod().equals(HttpMethod.GET)){
-            UserController.getUserData(request, out);
-        } else if(request.getMethod().equals(HttpMethod.PUT)){
-            UserController.getUserData(request, out);
+    private Controller getControllerForPath(String path) {
+        if(path.startsWith("/users")){
+            return new UserController();
         }
-    }
-
-    private void handleSessions(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.POST)){
-            //Create session
+        if(path.startsWith("/sessions")){
+            return new SessionController();
         }
-    }
-
-    private void handlePackages(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.POST)){
-            //Create package
+        if(path.startsWith("/packages")){
+            return new PackageController();
         }
-    }
-
-    private void handleTransaction(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.POST)){
-            //Create transaction
+        if(path.startsWith("/transactions/packages")){
+            return new TransactionController();
         }
-    }
-
-    private void handleCards(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.GET)){
-            //Get card
+        if(path.startsWith("/cards")){
+            return new CardController();
         }
-    }
-
-    private void handleDeck(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.GET)){
-            //Get deck
-        } else if(request.getMethod().equals(HttpMethod.PUT)){
-            //Update deck
+        if(path.startsWith("/deck")){
+            return new DeckController();
         }
-    }
-
-    private void handleTradings(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.POST)){
-            //Create trading
-        } else if(request.getMethod().equals(HttpMethod.GET)){
-            //Get trading
-        } else if(request.getMethod().equals(HttpMethod.PUT)){
-            //Update trading
-        } else if(request.getMethod().equals(HttpMethod.DELETE)){
-            //Delete trading
+        if(path.startsWith("/stats")){
+            return new StatsController();
         }
-    }
-
-    private void handleScoreboard(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.GET)){
-            //Get scoreboard
+        if(path.startsWith("/tradings")){
+            return new TradingController();
         }
-    }
-
-    private void handleStats(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.GET)){
-            //Get stats
+        if(path.startsWith("/scoreboard") || path.startsWith("/stats")){
+            return new ScoreboardController();
         }
-    }
-
-    private void handleBattle(HttpRequest request, BufferedWriter out){
-        if(request.getMethod().equals(HttpMethod.POST)){
-            //Create battle
+        if(path.startsWith("/battles")){
+            return new BattleController();
         }
+        return null;
     }
-
 }
 

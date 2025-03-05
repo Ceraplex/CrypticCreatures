@@ -1,14 +1,24 @@
 package CrypticCreatures.api;
 
 import CrypticCreatures.core.models.User;
+import CrypticCreatures.httpServer.http.HttpMethod;
 import CrypticCreatures.httpServer.http.HttpRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public class SessionController {
+public class SessionController implements Controller {
 
+    @Override
+    public void handleRequest(HttpRequest request, BufferedWriter out) throws IOException {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+
+        }
+        if (request.getMethod().equals(HttpMethod.POST)) {
+
+        }
+    }
     private static void loginUser(HttpRequest request, BufferedWriter out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(request.getBody(), User.class);

@@ -21,6 +21,16 @@ public class User {
     private int money = 0;
     private int elo = 100;
 
+
+    // Custom constructor for initializing fields from the database
+    public User(String username, String password, int money, int elo, Integer profilePageId) {
+        this.username = username;
+        this.password = password;
+        this.money = money;
+        this.elo = elo;
+        this.profilePageId = profilePageId;
+    }
+
     public static void setStack(Stack stack) {
         //TODO: user managed stack for fights
     }

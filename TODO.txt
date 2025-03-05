@@ -3,6 +3,3 @@ Services should be used by Controllers to handle business logic. Controllers sho
 Servers should do Parsing of the request into a Request Object
 
 JavaPersistenceAPI einlesen
-
-Dockerfile erstellen
-SQL init file mit DB structure erstellen

@@ -18,66 +18,22 @@ public class UsersDaoDb implements Dao<User> {
         this.dbConnection = DbConnection.getInstance();
     }
 
-
+    //TODO: implement get user
     @Override
     public Optional<User> get(int id) {
-        try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                SELECT fid, objectid, shape, anlname, bezirk, spielplatzdetail, typdetail, seannocaddata 
-                FROM playgroundpoints 
-                WHERE objectid=?
-                """)
+        try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("")
         ) {
-            statement.setInt( 1, id );
-            ResultSet resultSet = statement.executeQuery();
-            if( resultSet.next() ) {
-                return Optional.of( new User(
-                        //get args from SQL select statement
-                        /*
-                        resultSet.getString(1),
-                        resultSet.getInt( 2 ),
-                        resultSet.getString( 3 ),
-                        resultSet.getString( 4 ),
-                        resultSet.getInt( 5 ),
-                        resultSet.getString( 6 ),
-                        resultSet.getString( 7 ),
-                        resultSet.getString( 8 )
-                        */
-                ) );
-            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return Optional.empty();
     }
 
+    //TODO: implement get all users
     @Override
     public Collection<User> getAll() {
-        ArrayList<User> result = new ArrayList<>();
-        try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                SELECT fid, objectid, shape, anlname, bezirk, spielplatzdetail, typdetail, seannocaddata 
-                FROM playgroundpoints 
-                """)
-        ) {
-            ResultSet resultSet = statement.executeQuery();
-            while( resultSet.next() ) {
-                result.add( new User(
-                        /*
-                        resultSet.getString(1),
-                        resultSet.getInt( 2 ),
-                        resultSet.getString( 3 ),
-                        resultSet.getString( 4 ),
-                        resultSet.getInt( 5 ),
-                        resultSet.getString( 6 ),
-                        resultSet.getString( 7 ),
-                        resultSet.getString( 8 )
-
-                         */
-                ) );
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return result;
+        return null;
     }
 
     @Override
@@ -89,7 +45,7 @@ public class UsersDaoDb implements Dao<User> {
                 preparedCheck.setString(1, user.getUsername());
                 try (ResultSet checkResult = preparedCheck.executeQuery()) {
                     if (checkResult.next() && checkResult.getInt(1) > 0) {
-                        // Username is already in use
+                        // Username already exists
                         return false;
                     }
                 }
@@ -97,8 +53,7 @@ public class UsersDaoDb implements Dao<User> {
 
             // 2) Insert new user (include money, elo, and optionally profile_page_id)
             String sqlInsert =
-                    "INSERT INTO users (username, password, money, elo, profile_page_id) " +
-                            "VALUES (?, ?, ?, ?, ?)";
+                    "INSERT INTO users (username, password, money, elo, profile_page_id) " + "VALUES (?, ?, ?, ?, ?)";
 
             try (PreparedStatement preparedInsert = dbConnection.prepareStatement(sqlInsert)) {
                 preparedInsert.setString(1, user.getUsername());
@@ -126,14 +81,41 @@ public class UsersDaoDb implements Dao<User> {
 
     //TODO: implement update user
     @Override
-    public boolean update(User playgroundPoint, String[] params) {
+    public boolean update(User user, String[] params) {
         return true;
     }
-
-    //TODO: implement delete user
     @Override
-    public boolean delete(User User) {
-        return true;
+    public boolean delete(User user) {
+        String sql = "DELETE FROM users WHERE username = ?";
+        try (PreparedStatement ps = dbConnection.prepareStatement(sql)) {
+            ps.setString(1, user.getUsername());
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    public User getUserByUsername(String username) throws SQLException {
+        try (PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new User(
+                            resultSet.getString("username"),
+                            resultSet.getString("password"),
+                            resultSet.getInt("money"),
+                            resultSet.getInt("elo"),
+                            resultSet.getInt("profile_page_id")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Optionally rethrow or handle the exception as needed
+            throw e;
+        }
+        return null;
+    }
 }
