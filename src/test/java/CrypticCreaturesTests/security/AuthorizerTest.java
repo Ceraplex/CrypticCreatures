@@ -77,9 +77,29 @@ public class AuthorizerTest {
     public void testAuthorizeHttpRequest_invalid() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "invalid-token");
+        headers.put("Authorization", "Bearer invalid-token");
         when(request.getHeaders()).thenReturn(headers);
 
         assertFalse(Authorizer.authorizeHttpRequest(request));
+    }
+
+    @Test
+    public void testAuthorizeAdmin_valid() {
+        HttpRequest request = mock(HttpRequest.class);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer admin-mtcgToken");
+        when(request.getHeaders()).thenReturn(headers);
+
+        assertTrue(Authorizer.isAdmin(request));
+    }
+
+    @Test
+    public void testAuthorizeAdmin_invalid() {
+        HttpRequest request = mock(HttpRequest.class);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer admin-kienboec-mtcgToken");
+        when(request.getHeaders()).thenReturn(headers);
+
+        assertFalse(Authorizer.isAdmin(request));
     }
 }

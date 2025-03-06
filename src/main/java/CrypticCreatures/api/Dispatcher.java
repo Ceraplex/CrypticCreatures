@@ -3,7 +3,6 @@ package CrypticCreatures.api;
 
 import CrypticCreatures.httpServer.http.HttpRequestParser;
 import CrypticCreatures.httpServer.http.HttpRequest;
-import CrypticCreatures.httpServer.http.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,17 +42,11 @@ public class Dispatcher implements Runnable {
     }
 
     private Controller getControllerForPath(String path) {
-        if(path.startsWith("/users")){
+        if(path.startsWith("/users")||path.startsWith("/sessions")){
             return new UserController();
         }
-        if(path.startsWith("/sessions")){
-            return new SessionController();
-        }
-        if(path.startsWith("/packages")){
-            return new PackageController();
-        }
-        if(path.startsWith("/transactions/packages")){
-            return new TransactionController();
+        if(path.startsWith("/packages") || path.startsWith("/transactions/packages")){
+            return new CardPackController();
         }
         if(path.startsWith("/cards")){
             return new CardController();

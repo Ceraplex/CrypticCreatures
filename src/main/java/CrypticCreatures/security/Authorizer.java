@@ -48,4 +48,15 @@ public class Authorizer {
         }
         return token.split("-mtcgToken")[0];
     }
+
+    public static boolean isAdmin(HttpRequest request) {
+        String token = getToken(request);
+        if (token == null) {
+            return false;
+        }
+        if(isTokenValid(token)){
+            return token.equals("admin-mtcgToken");
+        }
+        return false;
+    }
 }

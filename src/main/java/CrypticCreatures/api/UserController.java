@@ -20,7 +20,12 @@ public class UserController implements Controller {
             getUserData(request, out);
         }
         if (request.getMethod().equals(HttpMethod.POST)) {
-            registerUser(request, out);
+            if(request.getPath().startsWith("/users")) {
+                registerUser(request, out);
+            }
+            if (request.getPath().startsWith("/sessions")) {
+                loginUser(request, out);
+            }
         }
         if (request.getMethod().equals(HttpMethod.PUT)) {
             updateUser(request, out);
@@ -31,7 +36,7 @@ public class UserController implements Controller {
         }
     }
     // METHOD: POST
-    public static void registerUser(HttpRequest request, BufferedWriter out) throws IOException {
+    private static void registerUser(HttpRequest request, BufferedWriter out) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(request.getBody(), User.class);
 
@@ -39,31 +44,35 @@ public class UserController implements Controller {
 
         if(usersDao.save(user)){
             //Success:
-            out.write("HTTP/1.1 201 Created\r\n");
-            out.write("\r\n");
-            out.flush();
-
-            //TODO: remove debug info
-            System.out.println("user registered");
-            System.out.println(user.toString());
-
+            sendUserCreated(out);
         }else{
             //Error:
-            out.write("HTTP/1.1 409 Conflict\r\n");
-            out.write("Content-Type: text/plain\r\n");
-            out.write("\r\n");
-            out.write("409 - Conflict: Username already exists\r\n");
-            out.flush();
-
-            //TODO: remove debug info
-            System.out.println("user already exists");
-            System.out.println(user.toString());
+            userAlreadyExists(out);
         }
+    }
+
+    private static void loginUser(HttpRequest request, BufferedWriter out) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        User requestUser = mapper.readValue(request.getBody(), User.class);
+
+        UsersDaoDb usersDao = new UsersDaoDb();
+        try{
+            User existingUser = usersDao.getUserByUsername(requestUser.getUsername());
+            if(existingUser != null && existingUser.getPassword().equals(requestUser.getPassword())) {
+                out.write("HTTP/1.1 200 OK\r\n\r\n");
+                out.write("Content-Type: text/plain\r\n");
+                out.write("\r\n");
+                out.write(existingUser.getUsername() + "-mtcgToken");
+            }
+        }catch(SQLException e){
+            sendUserNotFound(out);
+        }
+
     }
 
     //TODO: test
     //METHOD: GET
-    public static void getUserData(HttpRequest request, BufferedWriter out) throws IOException{
+    private static void getUserData(HttpRequest request, BufferedWriter out) throws IOException{
         if(Authorizer.authorizeHttpRequest(request)){
             String username = Authorizer.getUsernameFromRequest(request);
             UsersDaoDb usersDao = new UsersDaoDb();
@@ -74,7 +83,7 @@ public class UserController implements Controller {
                     String json = mapper.writeValueAsString(user);
                     out.write("HTTP/1.1 200 OK\r\n\r\n" + json);
                 } else {
-                    sendNotFound(out);
+                    sendUserNotFound(out);
                 }
             } catch (SQLException e){
                 e.printStackTrace();
@@ -96,8 +105,16 @@ public class UserController implements Controller {
     }
 
 
-    //Example request processing #######################################################################################
-    //TODO: remove before hand-in
+    //Response methods
+    private static void sendUserCreated(BufferedWriter out) throws IOException {
+        out.write("HTTP/1.1 201 Created\r\n");
+        out.write("Content-Type: text/plain\r\n");
+        out.write("\r\n");
+        out.write("201 - Created: User created");
+        out.flush();
+    }
+
+    //TODO: remove or generalize
     private static void sendUserList(BufferedWriter out) throws IOException {
         out.write("HTTP/1.1 200 OK\r\n");
         out.write("Content-Type: application/json\r\n");
@@ -106,7 +123,15 @@ public class UserController implements Controller {
         out.flush();
     }
 
-    private static void sendNotFound(BufferedWriter out) throws IOException {
+    private static void userAlreadyExists(BufferedWriter out) throws IOException {
+        out.write("HTTP/1.1 409 Conflict\r\n");
+        out.write("Content-Type: text/plain\r\n");
+        out.write("\r\n");
+        out.write("409 - User with same username already registered");
+        out.flush();
+    }
+
+    private static void sendUserNotFound(BufferedWriter out) throws IOException {
         out.write("HTTP/1.1 404 Not Found\r\n");
         out.write("Content-Type: text/plain\r\n");
         out.write("\r\n");
@@ -126,7 +151,7 @@ public class UserController implements Controller {
         out.write("HTTP/1.1 401 Unauthorized\r\n");
         out.write("Content-Type: text/plain\r\n");
         out.write("\r\n");
-        out.write("401 - Unauthorized");
+        out.write("401 - Access token is missing or invalid");
         out.flush();
     }
 }

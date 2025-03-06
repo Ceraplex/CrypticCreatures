@@ -1,63 +1,57 @@
--- Create Profile Page Table
-CREATE TABLE profile_pages
-(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
-    about_me TEXT
-);
-
 -- Create Users Table
 CREATE TABLE users
 (
-    id SERIAL PRIMARY KEY,
+    uid SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     money INT NOT NULL CHECK (money >= 0),
-    elo INT NOT NULL CHECK (elo >= 0),
-    profile_page_id INT UNIQUE,
-    CONSTRAINT fk_profile_page FOREIGN KEY (profile_page_id)
-        REFERENCES profile_pages (id)
-        ON DELETE SET NULL
+    elo INT NOT NULL CHECK (elo >= 0)
 );
 
 -- Create Cards Table
 CREATE TABLE cards
 (
-    id SERIAL PRIMARY KEY,
+    cid VARCHAR(255) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     dmg INT NOT NULL CHECK (dmg >= 0),
-    element_type VARCHAR(50),
-    monster_type VARCHAR(50)
+    element_type VARCHAR(50) NOT NULL ,
+    monster_type VARCHAR(50) NOT NULL
 );
 
--- Create User_Cards Table to link Users and Cards (Stack system)
-CREATE TABLE user_cards
+-- Create Profile Page Table
+CREATE TABLE profile_pages
 (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    card_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE
+    pid INT PRIMARY KEY REFERENCES users(uid) ON DELETE CASCADE,
+    firstname VARCHAR(255) NOT NULL ,
+    lastname VARCHAR(255) NOT NULL ,
+    image BYTEA
 );
 
--- Create Decks Table
-CREATE TABLE decks
-(
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+CREATE TABLE decks (
+    uid INT REFERENCES users(uid) ON DELETE CASCADE,
+    cid VARCHAR(255) REFERENCES cards(cid) ON DELETE CASCADE,
+    PRIMARY KEY (uid, cid)
 );
 
--- Create Deck_Cards Table to associate cards with decks
-CREATE TABLE deck_cards
-(
-    id SERIAL PRIMARY KEY,
-    deck_id INT NOT NULL,
-    card_id INT NOT NULL,
-    position INT NOT NULL, -- Optional: position in the deck
+CREATE TABLE stacks (
+    uid INT REFERENCES users(uid) ON DELETE CASCADE,
+    cid VARCHAR(255) REFERENCES cards(cid) ON DELETE CASCADE,
+    PRIMARY KEY (uid, cid)
+);
 
-    FOREIGN KEY (deck_id) REFERENCES decks (id) ON DELETE CASCADE,
-    FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE
+-- Create Packages Table
+CREATE TABLE packages
+(
+    pid SERIAL PRIMARY KEY,
+    price INT NOT NULL CHECK (price >= 0)
+);
+
+-- Associate Cards with Packages
+CREATE TABLE package_cards
+(
+    package_id INT NOT NULL,
+    card_id VARCHAR(255) NOT NULL,
+    PRIMARY KEY (package_id, card_id),
+    FOREIGN KEY (package_id) REFERENCES packages(pid) ON DELETE CASCADE,
+    FOREIGN KEY (card_id) REFERENCES cards(cid) ON DELETE CASCADE
 );

@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
-public class UsersDaoDb implements Dao<User> {
+public class UsersDaoDb {
 
     private final DbConnection dbConnection;
 
@@ -19,7 +19,6 @@ public class UsersDaoDb implements Dao<User> {
     }
 
     //TODO: implement get user
-    @Override
     public Optional<User> get(int id) {
         try ( PreparedStatement statement = DbConnection.getInstance().prepareStatement("")
         ) {
@@ -31,12 +30,10 @@ public class UsersDaoDb implements Dao<User> {
     }
 
     //TODO: implement get all users
-    @Override
     public Collection<User> getAll() {
         return null;
     }
 
-    @Override
     public boolean save(User user) {
         try {
             // 1) Check if username already exists
@@ -80,11 +77,9 @@ public class UsersDaoDb implements Dao<User> {
 
 
     //TODO: implement update user
-    @Override
     public boolean update(User user, String[] params) {
         return true;
     }
-    @Override
     public boolean delete(User user) {
         String sql = "DELETE FROM users WHERE username = ?";
         try (PreparedStatement ps = dbConnection.prepareStatement(sql)) {
@@ -113,7 +108,6 @@ public class UsersDaoDb implements Dao<User> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Optionally rethrow or handle the exception as needed
             throw e;
         }
         return null;

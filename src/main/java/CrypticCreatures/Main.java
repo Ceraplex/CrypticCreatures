@@ -11,12 +11,4 @@ public class Main {
         server.start(10001);
 
     }
-    public static void buildDeck(){
-
-    }
-    public static Card createCard(){
-        Card testCard = new MonsterCard();
-        return testCard;
-    };
-
 }

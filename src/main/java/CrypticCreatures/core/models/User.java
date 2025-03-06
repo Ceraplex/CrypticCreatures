@@ -14,11 +14,12 @@ public class User {
     @JsonProperty("Password")
     private String password;
     private Integer profilePageId;
+    private Integer uid;
 
     private String token;
     private Stack stack = new Stack();
     private Stack deck = new Stack();
-    private int money = 0;
+    private int money = 100;
     private int elo = 100;
 
 
