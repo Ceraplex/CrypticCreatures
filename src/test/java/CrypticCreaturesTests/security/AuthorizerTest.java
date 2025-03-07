@@ -34,7 +34,7 @@ public class AuthorizerTest {
     public void testGetUsernameFromRequest() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer kienboec-mtcgToken");
+        headers.put("authorization", "Bearer kienboec-mtcgToken");
         when(request.getHeaders()).thenReturn(headers);
 
         assertEquals("kienboec", Authorizer.getUsernameFromRequest(request));
@@ -45,7 +45,7 @@ public class AuthorizerTest {
         // Create a mock HttpRequest
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer kienboec-mtcgToken");
+        headers.put("authorization", "Bearer kienboec-mtcgToken");
         when(request.getHeaders()).thenReturn(headers);
 
         String token = Authorizer.getToken(request);
@@ -56,7 +56,7 @@ public class AuthorizerTest {
     public void testGetToken_whenHeaderMissing() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        // No Authorization header added
+        // No authorization header added
         when(request.getHeaders()).thenReturn(headers);
 
         String token = Authorizer.getToken(request);
@@ -67,7 +67,7 @@ public class AuthorizerTest {
     public void testAuthorizeHttpRequest_valid() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer kienboec-mtcgToken");
+        headers.put("authorization", "Bearer kienboec-mtcgToken");
         when(request.getHeaders()).thenReturn(headers);
 
         assertTrue(Authorizer.authorizeHttpRequest(request));
@@ -77,7 +77,7 @@ public class AuthorizerTest {
     public void testAuthorizeHttpRequest_invalid() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer invalid-token");
+        headers.put("authorization", "Bearer invalid-token");
         when(request.getHeaders()).thenReturn(headers);
 
         assertFalse(Authorizer.authorizeHttpRequest(request));
@@ -87,7 +87,7 @@ public class AuthorizerTest {
     public void testAuthorizeAdmin_valid() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer admin-mtcgToken");
+        headers.put("authorization", "Bearer admin-mtcgToken");
         when(request.getHeaders()).thenReturn(headers);
 
         assertTrue(Authorizer.isAdmin(request));
@@ -97,7 +97,7 @@ public class AuthorizerTest {
     public void testAuthorizeAdmin_invalid() {
         HttpRequest request = mock(HttpRequest.class);
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer admin-kienboec-mtcgToken");
+        headers.put("authorization", "Bearer admin-kienboec-mtcgToken");
         when(request.getHeaders()).thenReturn(headers);
 
         assertFalse(Authorizer.isAdmin(request));

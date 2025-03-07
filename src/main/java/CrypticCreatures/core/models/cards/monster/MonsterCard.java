@@ -20,4 +20,9 @@ public class MonsterCard extends Card {
         super.printCard();
         System.out.println("Creature Type: " + creatureType);
     }
+
+    @Override
+    public double getDmg() {
+        return this.dmg * this.creatureType.getDmgMultiplier();
+    }
 }

@@ -13,4 +13,8 @@ public enum CreatureType {
     CreatureType(double dmgMultiplier) {
 
     }
+
+    public double getDmgMultiplier() {
+        return dmgMultiplier;
+    }
 }

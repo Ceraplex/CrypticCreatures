@@ -22,8 +22,8 @@ CREATE TABLE cards
 CREATE TABLE profile_pages
 (
     pid INT PRIMARY KEY REFERENCES users(uid) ON DELETE CASCADE,
-    firstname VARCHAR(255) NOT NULL ,
-    lastname VARCHAR(255) NOT NULL ,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
     image BYTEA
 );
 
@@ -49,9 +49,28 @@ CREATE TABLE packages
 -- Associate Cards with Packages
 CREATE TABLE package_cards
 (
-    package_id INT NOT NULL,
-    card_id VARCHAR(255) NOT NULL,
-    PRIMARY KEY (package_id, card_id),
-    FOREIGN KEY (package_id) REFERENCES packages(pid) ON DELETE CASCADE,
-    FOREIGN KEY (card_id) REFERENCES cards(cid) ON DELETE CASCADE
+    pid INT NOT NULL,
+    cid VARCHAR(255) NOT NULL,
+    PRIMARY KEY (pid, cid),
+    FOREIGN KEY (pid) REFERENCES packages(pid) ON DELETE CASCADE,
+    FOREIGN KEY (cid) REFERENCES cards(cid) ON DELETE CASCADE
 );
+
+-- Create Battle Queue Table
+CREATE TABLE battle_queue
+(
+    uid INT PRIMARY KEY REFERENCES users(uid) ON DELETE CASCADE,
+    elo INT NOT NULL CHECK (elo >= 0)
+);
+
+-- Create Trades Table
+CREATE TABLE trades (
+    tid VARCHAR(255) PRIMARY KEY,
+    uid int NOT NULL,
+    cid VARCHAR(255) NOT NULL,
+    required_type VARCHAR(50) NOT NULL,
+    min_damage INT NOT NULL,
+    FOREIGN KEY (uid) REFERENCES users(uid) ON DELETE CASCADE,
+    FOREIGN KEY (cid) REFERENCES cards(cid) ON DELETE CASCADE
+);
+

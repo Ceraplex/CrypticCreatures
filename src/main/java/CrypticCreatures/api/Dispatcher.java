@@ -42,29 +42,20 @@ public class Dispatcher implements Runnable {
     }
 
     private Controller getControllerForPath(String path) {
-        if(path.startsWith("/users")||path.startsWith("/sessions")){
+        if(path.startsWith("/users")||path.startsWith("/sessions")||path.startsWith("/deck")){
             return new UserController();
         }
         if(path.startsWith("/packages") || path.startsWith("/transactions/packages")){
             return new CardPackController();
         }
-        if(path.startsWith("/cards")){
-            return new CardController();
-        }
-        if(path.startsWith("/deck")){
-            return new DeckController();
-        }
-        if(path.startsWith("/stats")){
-            return new StatsController();
-        }
         if(path.startsWith("/tradings")){
             return new TradingController();
         }
-        if(path.startsWith("/scoreboard") || path.startsWith("/stats")){
-            return new ScoreboardController();
-        }
         if(path.startsWith("/battles")){
             return new BattleController();
+        }
+        if(path.startsWith("/reset")){
+            return new ResetController();
         }
         return null;
     }

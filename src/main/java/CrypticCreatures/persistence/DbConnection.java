@@ -42,25 +42,9 @@ public class DbConnection implements Closeable {
         return getConnection().prepareStatement(sql);
     }
 
-    public boolean executeSql(String sql) throws SQLException {
-        return executeSql(getConnection(), sql, false);
+    public PreparedStatement prepareStatement(String sql, int generatedKeys) throws SQLException {
+        return connection.prepareStatement(sql, generatedKeys);
     }
-
-    public static boolean executeSql(Connection connection, String sql, boolean ignoreIfFails) throws SQLException {
-        try ( Statement statement = connection.createStatement() ) {
-            statement.execute(sql );
-            return true;
-        } catch (SQLException e) {
-            if( !ignoreIfFails )
-                throw e;
-            return false;
-        }
-    }
-
-    public static boolean executeSql(Connection connection, String sql) throws SQLException {
-        return executeSql(connection, sql, false);
-    }
-
 
     @Override
     public void close() {

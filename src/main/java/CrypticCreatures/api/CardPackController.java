@@ -2,12 +2,16 @@ package CrypticCreatures.api;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import CrypticCreatures.core.models.User;
 import CrypticCreatures.persistence.dao.CardDaoDb;
+import CrypticCreatures.persistence.dao.StackDao;
+import CrypticCreatures.persistence.dao.UsersDaoDb;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -87,7 +91,46 @@ public class CardPackController implements Controller {
     }
 
     private static void buyCardPack(HttpRequest request, BufferedWriter out) throws IOException {
+        if(Authorizer.authorizeHttpRequest(request)){
+            CardPackDaoDb cardPackDaoDb = new CardPackDaoDb();
+            UsersDaoDb usersDaoDb = new UsersDaoDb();
+            StackDao stackDao = new StackDao();
+            try {
+                //get user and card pack from DB
+                Optional<User> user = usersDaoDb.getUserByUsername(Authorizer.getUsernameFromRequest(request));
+                Optional<CardPack> cardPack = cardPackDaoDb.getOnePack();
 
+                if(cardPack.isPresent() && user.isPresent()){
+                    //can user afford card pack?
+                    if(user.get().getMoney() >= cardPack.get().getCost()){
+                        user.get().setMoney(user.get().getMoney() - cardPack.get().getCost());
+                        //verify if user has paid
+                        if(usersDaoDb.update(user.get())){
+                            if(stackDao.buyCardPack(user.get(), cardPack.get())){
+                                out.write("HTTP/1.1 200 OK\r\n");
+                                out.write("Content-Type: text/plain\r\n");
+                                out.write("\r\n");
+                                out.write("200 - A package has been successfully bought");
+                                out.flush();
+                            }
+                        } else {
+                            sendServerError(out);
+                        }
+
+                    } else {
+                        sendNotEnoughtMoney(out);
+                    }
+                } else {
+                    sendCardPackNotFound(out);
+                }
+
+
+            }catch (SQLException e){
+                sendCardPackNotFound(out);
+            }
+        }else {
+            sendUnauthorized(out);
+        }
     }
 
     private static void sendCardPackCreated(BufferedWriter out) throws IOException {
@@ -102,7 +145,7 @@ public class CardPackController implements Controller {
         out.write("HTTP/1.1 404 Not Found\r\n");
         out.write("Content-Type: text/plain\r\n");
         out.write("\r\n");
-        out.write("404 - Package Not Found");
+        out.write("404 - No card package available for buying");
         out.flush();
     }
 
@@ -111,6 +154,14 @@ public class CardPackController implements Controller {
         out.write("Content-Type: text/plain\r\n");
         out.write("\r\n");
         out.write("401 - Access token is missing or invalid");
+        out.flush();
+    }
+
+    private static void sendNotEnoughtMoney(BufferedWriter out) throws IOException {
+        out.write("HTTP/1.1 403 Missing Funds\r\n");
+        out.write("Content-Type: text/plain\r\n");
+        out.write("\r\n");
+        out.write("403 - Not enough money for buying a card package");
         out.flush();
     }
 
@@ -135,6 +186,14 @@ public class CardPackController implements Controller {
         out.write("Content-Type: text/plain\r\n");
         out.write("\r\n");
         out.write("409 - At least one card in the packages already exists");
+        out.flush();
+    }
+
+    private static void sendServerError(BufferedWriter out) throws IOException {
+        out.write("HTTP/1.1 500 Internal Server Error\r\n");
+        out.write("Content-Type: text/plain\r\n");
+        out.write("\r\n");
+        out.write("500 - Internal Server Error");
         out.flush();
     }
 }

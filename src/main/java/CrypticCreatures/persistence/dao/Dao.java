@@ -2,11 +2,7 @@ package CrypticCreatures.persistence.dao;
 import java.util.Collection;
 import java.util.Optional;
 
-/**
- * Implementation of the Data-Access-Object Pattern
- *
- * @param <T>
- */
+
 // DAO overview see: https://www.baeldung.com/java-dao-pattern
 public interface Dao<T> {
 
@@ -19,7 +15,7 @@ public interface Dao<T> {
     boolean save(T t);
 
     // UPDATE
-    boolean update(T t, String[] params);
+    boolean update(T t);
 
     // DELETE
     boolean delete(T t);

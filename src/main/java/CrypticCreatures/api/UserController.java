@@ -3,6 +3,7 @@ package CrypticCreatures.api;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,13 +42,18 @@ public class UserController implements Controller {
         User user = mapper.readValue(request.getBody(), User.class);
 
         UsersDaoDb usersDao = new UsersDaoDb();
-
-        if(usersDao.save(user)){
-            //Success:
-            sendUserCreated(out);
-        }else{
-            //Error:
-            userAlreadyExists(out);
+        try{
+            if(usersDao.save(user)){
+                //Success:
+                sendUserCreated(out);
+            }else{
+                //Error:
+                userAlreadyExists(out);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+            out.write("HTTP/1.1 500 Internal Server Error\r\n");
+            out.flush();
         }
     }
 
@@ -57,12 +63,13 @@ public class UserController implements Controller {
 
         UsersDaoDb usersDao = new UsersDaoDb();
         try{
-            User existingUser = usersDao.getUserByUsername(requestUser.getUsername());
-            if(existingUser != null && existingUser.getPassword().equals(requestUser.getPassword())) {
+            Optional<User> existingUser = usersDao.getUserByUsername(requestUser.getUsername());
+            if(existingUser.isPresent() && existingUser.get().getPassword().equals(requestUser.getPassword())) {
                 out.write("HTTP/1.1 200 OK\r\n\r\n");
                 out.write("Content-Type: text/plain\r\n");
                 out.write("\r\n");
-                out.write(existingUser.getUsername() + "-mtcgToken");
+                out.write(existingUser.get().getToken());
+                out.flush();
             }
         }catch(SQLException e){
             sendUserNotFound(out);
@@ -77,8 +84,8 @@ public class UserController implements Controller {
             String username = Authorizer.getUsernameFromRequest(request);
             UsersDaoDb usersDao = new UsersDaoDb();
             try{
-                User user = usersDao.getUserByUsername(username);
-                if (user != null) {
+                Optional<User> user = usersDao.getUserByUsername(username);
+                if (user.isPresent()) {
                     ObjectMapper mapper = new ObjectMapper();
                     String json = mapper.writeValueAsString(user);
                     out.write("HTTP/1.1 200 OK\r\n\r\n" + json);

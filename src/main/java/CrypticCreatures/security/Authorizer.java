@@ -13,17 +13,17 @@ public class Authorizer {
     }
 
     public static String getToken(HttpRequest request) {
-        String rawToken = request.getHeaders().get("Authorization");
+        String rawToken = request.getHeaders().get("authorization");
         if (rawToken == null){
             return null;
         }
-        if(!request.getHeaders().get("Authorization").contains("Bearer ")){
+        if(!request.getHeaders().get("authorization").contains("Bearer ")){
             return null;
         }
-        if(request.getHeaders().get("Authorization").split("Bearer ")[1] == null){
+        if(request.getHeaders().get("authorization").split("Bearer ")[1] == null){
             return null;
         }
-        return request.getHeaders().get("Authorization").split("Bearer ")[1];
+        return request.getHeaders().get("authorization").split("Bearer ")[1];
     }
 
     public static String getUsernameFromRequest(HttpRequest request) {
